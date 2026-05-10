@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cart Items</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style>
+    body {
+        background-color: #f5f7fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .card {
+        border: none;
+        border-radius: 16px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        color: #343a40;
+    }
+
+    .card-text {
+        font-size: 1rem;
+        color: #6c757d;
+        margin-bottom: 1rem;
+    }
+
+    .btn-outline-secondary,
+    .btn-outline-danger {
+        padding: 0.25rem 0.6rem;
+        font-size: 0.9rem;
+        border-radius: 8px;
+    }
+
+    .btn-outline-danger {
+        font-weight: bold;
+    }
+
+    .fw-bold {
+        font-size: 1.1rem;
+        color: #212529;
+    }
+
+    .navbar {
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    h2 {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    /* Optional: add some animation on card entry */
+    .col {
+        animation: fadeInUp 0.5s ease-in-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1rem;
+        }
+        .card-title {
+            font-size: 1.1rem;
+        }
+        .card-text {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .btn-sm {
+            padding: 0.2rem 0.4rem;
+            font-size: 0.8rem;
+        }
+        .container {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        h2 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" style="color: white;" href="/data">CartApp</a>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Your Cart Items</h2>
+      <a href="/data" class="btn btn-outline-dark">Shop More</a>
+<br><br><br>
+    <div class="row row-cols-2 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="col" th:each="item, iterStat : ${cartItems}">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold" th:text="${item.name}">Item Name</h5>
+                    <p class="card-text">
+                        <strong>Price:</strong> ₹<span th:text="${item.price}">100</span><br>
+                        <strong>Subtotal:</strong> ₹<span th:text="${item.price * item.quantity}">100</span>
+                    </p>
+
+                    <!-- Quantity controls -->
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <form th:action="@{/cart/decrease/{id}(id=${item.id})}" method="post">
+                            <button class="btn btn-sm btn-outline-secondary" type="submit">−</button>
+                        </form>
+
+                        <span class="fw-bold" th:text="${item.quantity}">1</span>
+
+                        <form th:action="@{/cart/increase/{id}(id=${item.id})}" method="post">
+                            <button class="btn btn-sm btn-outline-secondary" type="submit">+</button>
+                        </form>
+                    </div>
+
+                    <!-- Delete button -->
+                    <form th:action="@{/cart/delete/{id}(id=${item.id})}" method="post" onsubmit="return confirm('Remove this item?');">
+                        <button class="btn btn-sm btn-outline-danger w-100">Remove ❌</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Total & Payment Section -->
+<div class="container mt-4">
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="col" th:each="item : ${cartItems}">
+            <!-- Each cart item card here -->
+        </div>
+    </div>
+
+    <!-- Total & Payment Section -->
+    <div class="row mt-5">
+        <div class="col-md-6 offset-md-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Amount</h5>
+                    <p class="card-text display-6">
+                        ₹<span th:text="${totalPrice}"></span>
+                    </p>
+                    <a th:href="@{/Cart-Regis}" class="btn btn-success btn-lg w-100 mt-3">checkout 💳</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Cart Item</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Edit Cart Item</h2>
+
+    <form th:action="@{/new}" th:object="${post}" method="post" class="card p-4 shadow-sm">
+        <!-- Hidden ID -->
+        <input type="hidden" th:field="*{id}" />
+
+        <!-- Name -->
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" th:field="*{name}" class="form-control" placeholder="Update item name" required>
+        </div>
+
+        <!-- Image -->
+        <div class="mb-3">
+            <label class="form-label">Image URL</label>
+            <input type="text" th:field="*{image}" class="form-control" placeholder="Update image URL" required>
+        </div>
+
+        <!-- Price -->
+        <div class="mb-3">
+            <label class="form-label">Price</label>
+            <input type="number" th:field="*{price}" class="form-control" step="0.01" placeholder="Update price" required>
+        </div>
+
+        <!-- Content -->
+        <div class="mb-3">
+            <label class="form-label">Content</label>
+            <textarea th:field="*{content}" class="form-control" rows="5" placeholder="Update description" required></textarea>
+        </div>
+
+        <!-- Author -->
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <input type="text" th:field="*{author}" class="form-control" placeholder="Update Description name" required>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-between">
+            <a href="/data" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-outline-primary"><a href="/data" style="text-decoration: none;">Update Item</a></button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

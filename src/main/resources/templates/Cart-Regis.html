@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cart Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+ <style>
+        body {
+            /* background: linear-gradient(135deg, #8086a0 0%, #ad96c3 100%); */
+            min-height: 100vh;
+        }
+
+        .card {
+            border-radius: 15px;
+        }
+
+        .disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+    </style>
+<body>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Your Cart Items</h2>
+    <a href="/cart/items" class="btn btn-outline-dark mb-4">Back</a>
+    <a href="/data" class="btn btn-outline-dark mb-4">Shop More</a>
+
+    <!-- CART TABLE -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Item Name</th>
+                    <th>Price (₹)</th>
+                    <th>Quantity</th>
+                    <th>Subtotal (₹)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item, iterStat : ${cartItems}">
+                    <td th:text="${iterStat.index + 1}">1</td>
+                    <td th:text="${item.name}">Item Name</td>
+                    <td th:text="${item.price}">100</td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center gap-2">
+                            <form th:action="@{/Cart-Regis/increase/{id}(id=${item.id})}" method="post">
+                                <button class="btn btn-success">+</button>
+                            </form>
+                            <span th:text="${item.quantity}">1</span>
+                            <form th:action="@{/Cart-Regis/decrease/{id}(id=${item.id})}" method="post">
+                                <button class="btn btn-warning">−</button>
+                            </form>
+                        </div>
+                    </td>
+                    <td th:text="${item.price * item.quantity}">100</td>
+                    <td>
+                        <form th:action="@{/Cart-Regis/delete/{id}(id=${item.id})}" method="post" onsubmit="return confirm('Remove this item?');">
+                            <button class="btn btn-sm btn-outline-danger">Remove ❌</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="text-end fw-bold">Total</td>
+                    <td colspan="2" class="fw-bold">₹ <span id="totalPrice" th:text="${totalPrice}">0</span></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- Apply Coupon Buttons -->
+    <div class="d-flex flex-wrap justify-content-center gap-2 mt-4">
+        <button onclick="applyDiscount(2)" class="btn btn-outline-warning">2% OFF MINI{500}</button>
+        <button onclick="applyDiscount(5)" class="btn btn-outline-primary">5% OFF MINI{1000}</button>
+        <button onclick="applyDiscount(10)" class="btn btn-outline-success">10% OFF MINI{2000}</button>
+        <button onclick="removeDiscount()" class="btn btn-outline-danger">No Discount</button>
+    </div>
+
+    <!-- Price Breakdown -->
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-3">
+            <table class="table table-bordered text-end">
+                <tr>
+                    <th>Total Price:</th>
+                    <td>₹ <span id="displayTotal" th:text="${totalPrice}">0</span></td>
+                </tr>
+                <tr id="discountRow" style="display: none;">
+                    <th>Discount (<span id="appliedCoupon">COUPON</span>):</th>
+                    <td>- ₹ <span id="discountAmount">0</span></td>
+                </tr>
+                <tr id="finalRow" style="display: none;">
+                    <th>Final Price:</th>
+                    <td class="fw-bold text-success">₹ <span id="finalAmount">0</span></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- 🚚 DELIVERY FORM -->
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-light">Enter Your Details for Delivery</h2>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form id="deliveryForm" th:action="@{/Cart-Regis}" method="post" th:object="${user}" class="row g-3">
+                <div class="col-md-6">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input type="text" th:field="*{firstName}" class="form-control" id="firstName" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input type="text" th:field="*{lastName}" class="form-control" id="lastName" required>
+                </div>
+                <div class="col-12">
+                    <label for="address" class="form-label">Address</label>
+                    <textarea th:field="*{address}" class="form-control" id="address" rows="2" required></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" th:field="*{email}" class="form-control" id="email" readonly />
+                </div>
+                <div class="col-md-6">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="tel" th:field="*{phone}" class="form-control" id="phone" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="city" class="form-label">City</label>
+                    <select th:field="*{city}" class="form-select" id="city" required>
+                        <option value="" disabled selected>Select City</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Kolkata">Kolkata</option>
+                        <option value="Chennai">Chennai</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Proceed to Payment Button -->
+<div class="container mt-4 mb-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <button type="submit" form="deliveryForm" id="proceedPaymentBtn" class="btn btn-lg btn-success w-100 disabled">
+                Proceed to Payment 💰 ₹ <span id="finalAmountLink" th:text="${totalPrice}">0</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- JS to Enable Button Only When Form is Valid -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("deliveryForm");
+        const proceedBtn = document.getElementById("proceedPaymentBtn");
+
+        form.addEventListener("input", () => {
+            const allValid = Array.from(form.querySelectorAll("input, textarea, select"))
+                .every(input => input.checkValidity());
+
+            proceedBtn.classList.toggle("disabled", !allValid);
+        });
+    });
+</script>
+
+<!-- ✅ JS Discount Logic -->
+<script>
+    function applyDiscount(percentage) {
+        const totalSpan = document.getElementById("totalPrice");
+        const discountRow = document.getElementById("discountRow");
+        const finalRow = document.getElementById("finalRow");
+
+        const displayTotal = parseFloat(totalSpan.innerText);
+        let allowed = false;
+
+        if (percentage === 10 && displayTotal > 2000) allowed = true;
+        else if (percentage === 5 && displayTotal > 1000) allowed = true;
+        else if (percentage === 2 && displayTotal > 500) allowed = true;
+
+        if (!allowed) {
+            alert(`Minimum amount required for ${percentage}% discount not met!`);
+            return;
+        }
+
+        const discountAmount = (displayTotal * percentage / 100).toFixed(2);
+        const finalAmount = (displayTotal - discountAmount).toFixed(2);
+
+        document.getElementById("discountAmount").innerText = discountAmount;
+        document.getElementById("finalAmount").innerText = finalAmount;
+        document.getElementById("appliedCoupon").innerText = percentage + "% OFF";
+        document.getElementById("finalAmountLink").innerText = finalAmount;
+
+        discountRow.style.display = "table-row";
+        finalRow.style.display = "table-row";
+    }
+      function removeDiscount() {
+        document.getElementById('discountRow').style.display = 'none';
+        document.getElementById('finalRow').style.display = 'none';
+    }
+</script>
+
+
+</body>
+</html>

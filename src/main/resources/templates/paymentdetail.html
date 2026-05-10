@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment Options</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #8086a0 0%, #ad96c3 100%);
+      min-height: 100vh;
+      padding: 30px;
+    }
+
+    .payment-btn {
+      width: 250px;
+    }
+
+    .payment-section {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .back-buttons a {
+      margin: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container bg-white p-4 rounded shadow" style="height: 1000px;">
+    <h2 class="text-center text-primary mb-4">💳 Payment Options</h2>
+
+    <!-- Address Section -->
+    <div class="row mb-4">
+<!-- To Address -->
+ <div class="col-md-6">
+    <label class="form-label">From Address</label>
+    <textarea class="form-control" rows="3" style="border: 2px solid black;" readonly
+              th:text="${randomFromAddress}">Warehouse address...</textarea>
+</div>
+<!-- From Address -->
+<div class="col-md-6">
+    <label class="form-label">To Address</label>
+    <textarea class="form-control" rows="3" style="border: 2px solid black;" readonly
+              th:text="${toAddress}">Shipping address...</textarea>
+</div>
+    </div>
+
+    <!-- Payment Buttons -->
+<!-- Payment Buttons -->
+<h5 class="mb-3 text-secondary text-center">Preferred Payment Options:</h5>
+
+<div class="d-flex justify-content-center">
+  <div class="d-grid gap-3" style="width: 250px;">
+    <button class="btn btn-outline-primary payment-btn" data-bs-toggle="modal" data-bs-target="#payzappModal">💰 PayZapp</button>
+    <button class="btn btn-outline-success payment-btn" data-bs-toggle="modal" data-bs-target="#phonepeModal">📱 PhonePe UPI</button>
+    <button class="btn btn-outline-info payment-btn" data-bs-toggle="modal" data-bs-target="#paytmModal">🅿️ Paytm UPI</button>
+    <button class="btn btn-outline-danger payment-btn" data-bs-toggle="modal" data-bs-target="#gpayModal">🔵 Google Pay</button>
+  </div>
+</div>
+<br>
+    <!-- Back Buttons -->
+    <div class="text-center back-buttons">
+      <a class="btn btn-outline-secondary" href="/data" role="button">⬅️ Back to Home</a>
+      <a class="btn btn-outline-primary" href="/cart/items" role="button">🛒 Back to Cart</a>
+      <a class="btn btn-outline-success" href="/Cart-Regis" role="button">📋 Back to Cart Details</a>
+    </div>
+  </div>
+
+  <!-- Payment Modals -->
+
+  <!-- PayZapp Modal -->
+  <div class="modal fade" id="payzappModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">Pay through PayZapp</h5></div>
+        <div class="modal-body">Click below to continue to PayZapp.</div>
+        <div class="modal-footer">
+          <a href="https://www.hdfcbank.com/personal/pay/payzapp" target="_blank" class="btn btn-primary">Continue</a>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PhonePe Modal -->
+  <div class="modal fade" id="phonepeModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">Pay through PhonePe</h5></div>
+        <div class="modal-body">Click below to continue to PhonePe UPI.</div>
+        <div class="modal-footer">
+          <a href="https://www.phonepe.com/" target="_blank" class="btn btn-success">Continue</a>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paytm Modal -->
+  <div class="modal fade" id="paytmModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">Pay through Paytm</h5></div>
+        <div class="modal-body">Click below to continue to Paytm UPI.</div>
+        <div class="modal-footer">
+          <a href="https://paytm.com/" target="_blank" class="btn btn-info">Continue</a>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Pay Modal -->
+  <div class="modal fade" id="gpayModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">Pay through Google Pay</h5></div>
+        <div class="modal-body">Click below to continue to Google Pay.</div>
+        <div class="modal-footer">
+          <a href="https://pay.google.com/" target="_blank" class="btn btn-danger">Continue</a>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

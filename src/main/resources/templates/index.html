@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>Cart Items</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #8086a0 0%, #ad96c3 100%);
+    }
+
+    /* Sidebar styles */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background-color: #f8f9fa;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+      transition: left 0.3s ease;
+      z-index: 1050;
+      padding: 1rem;
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .menu-list ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .menu-list li {
+      margin: 0.5rem 0;
+    }
+
+    .menu-list button,
+    .menu-list a {
+      width: 100%;
+      padding: 0.5rem;
+      text-align: left;
+      border: none;
+      background: none;
+      font-size: 1rem;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .menu-list a {
+      text-decoration: none;
+      display: block;
+    }
+
+    .menu-list button:hover,
+    .menu-list a:hover {
+      background-color: #e2e6ea;
+      border-radius: 5px;
+    }
+
+    body {
+      color: white;
+      font-family: sans-serif;
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    .carousel-slide {
+      max-width: 900px;
+      margin: auto;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      transition: all 0.4s ease;
+      min-height: 350px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .carousel-img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 15px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      margin: 5px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+    }
+
+    .dot.active {
+      background: white;
+      transform: scale(1.2);
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 50%;
+    }
+  </style>
+  <style>
+    section#slides_parent {
+      padding-top: 30px;
+    }
+
+    .slides {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .slides h4 {
+      color: #444;
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 50px;
+    }
+
+    .slide_1 {
+      background-image: url('https://images7.alphacoders.com/100/1003362.jpg');
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      width: 60px;
+      min-width: 60px;
+      height: 300px;
+      border-radius: 40px;
+      margin: 0;
+      position: relative;
+      transition: all 0.5s ease;
+    }
+
+    .slide_1:hover {
+      min-width: 250px;
+    }
+
+    .slide_1:hover .slide_info {
+      transform: rotate(0deg);
+      left: 20px;
+      bottom: 20px;
+      font-size: 22px;
+    }
+
+    .slide_2 {
+      background-image: url('https://www.shutterstock.com/image-photo/close-shot-group-bananas-600nw-2342140991.jpg');
+    }
+
+    .slide_3 {
+      background-image: url('https://cdn.pixabay.com/photo/2022/06/02/09/34/strawberries-7237523_1280.jpg');
+    }
+
+    .slide_4 {
+      background-image: url('https://png.pngtree.com/background/20211215/original/pngtree-grape-fruit-desktop-green-background-picture-image_1465904.jpg');
+    }
+
+    .slide_5 {
+      background-image: url('https://c4.wallpaperflare.com/wallpaper/66/719/602/orange-fruit-orange-fruit-food-wallpaper-preview.jpg');
+    }
+
+    .slide_6 {
+      background-image: url('https://media.istockphoto.com/id/831291474/photo/pineapple-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=ozyA1aMGkE2J8tX1Q5-UWx467T0o0aRlq97cIu4-Afg=');
+    }
+
+    .slide_7 {
+      background-image: url('https://www.shutterstock.com/image-photo/dragon-fruit-tropical-fruitshealthy-fruits-600nw-1707781852.jpg');
+    }
+
+    .slide_info {
+      position: absolute;
+      bottom: 51px;
+      color: #ffff;
+      transform: rotate(-90deg);
+      right: 0px;
+      font-weight: 700;
+      font-size: 12px;
+    }
+  </style>
+  <!-- CSS Styling -->
+  <style>
+    .privacy-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      /* semi-transparent background */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .privacy-box {
+      width: 90%;
+      max-width: 500px;
+      height: 500px;
+      background-color: #fefefe;
+      border-radius: 10px;
+      padding: 20px;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      cursor: pointer;
+    }
+  </style>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .carousel-slide {
+      padding: 30px;
+      color: white;
+      transition: background 0.5s ease-in-out;
+    }
+
+    .carousel-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .nav-btn {
+      background: #fff;
+      color: #333;
+      border: none;
+      font-size: 24px;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+
+    .rating {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+
+    .dot {
+      height: 10px;
+      width: 10px;
+      margin: 5px;
+      background-color: #ccc;
+      border-radius: 50%;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .dot.active {
+      background-color: white;
+    }
+
+    /* .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+    } */
+    .col-md-6 {
+      flex: 1 1 50%;
+      padding: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .carousel-slide {
+        min-height: 550px;
+        padding: 20px;
+      }
+      .slide_1 {
+        height: 200px !important;
+        min-width: 80px !important;
+      }
+      .slide_1:hover {
+        min-width: 180px !important;
+      }
+      #cartPopup {
+        right: 10px !important;
+        width: 150px !important;
+      }
+      .floating-icon {
+        font-size: 60px !important;
+      }
+      /* Smaller product cards on mobile */
+      .card-body {
+        padding: 10px;
+      }
+      .card-title {
+        font-size: 1.1rem;
+      }
+      .card-subtitle, .card-text {
+        font-size: 0.9rem;
+        margin-bottom: 5px !important;
+      }
+      .card-img-top {
+        height: 100px !important;
+      }
+      .card-footer .btn {
+        font-size: 0.8rem;
+        padding: 3px 6px;
+      }
+    }
+  </style>
+  <style>
+    /* Base style for all nav links */
+    .navbar-nav .nav-link {
+      transition: background-color 0.3s ease, color 0.3s ease;
+      border-radius: 6px;
+      padding: 6px 12px;
+    }
+
+    /* Unique hover colors */
+    .navbar-nav li:nth-child(1) .nav-link:hover {
+      background-color: #ffcccb;
+      /* Light Red */
+      color: #000;
+    }
+
+    .navbar-nav li:nth-child(2) .nav-link:hover {
+      background-color: #d1e7dd;
+      /* Light Green */
+      color: #000;
+    }
+
+    .navbar-nav li:nth-child(3) .nav-link:hover {
+      background-color: #cfe2ff;
+      /* Light Blue */
+      color: #000;
+    }
+
+    .navbar-nav li:nth-child(4) .nav-link:hover {
+      background-color: #f8d7da;
+      /* Light Pink */
+      color: #000;
+    }
+
+    .navbar-nav li:nth-child(5) .nav-link:hover {
+      background-color: #fff3cd;
+      /* Light Yellow */
+      color: #000;
+    }
+
+    .navbar-nav li:nth-child(6) .nav-link:hover {
+      background-color: #e2e3e5;
+      /* Light Grey */
+      color: #000;
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">Menu</div>
+      <button class="close-btn" onclick="closeSidebar()">&times;</button>
+    </div>
+    <div class="menu-list">
+      <ul>
+        <!-- Use <a> for proper linking -->
+        <li>
+          <a href="/dashboard" class="text-decoration-none text-dark">👤 View Dashboard</a>
+        </li>
+        <li><a href="/Registration">📝 Registration</a></li>
+        <li><button onclick="openPrivacyPolicy()">🔒 Privacy Policy</button></li>
+        <li><button data-bs-toggle="modal" data-bs-target="#accountModal">⚙️ Account Settings</button></li>
+        <li><button data-bs-toggle="modal" data-bs-target="#helpModal">❓ Help & Support</button></li>
+        <li><button data-bs-toggle="modal" data-bs-target="#safetyModal">🛡️ Safety Settings</button></li>
+      </ul>
+    </div>
+  </div>
+  <div id="privacyOverlay" class="privacy-overlay" style="display: none;">
+    <!-- Policy Content Box -->
+    <div class="privacy-box">
+      <button class="close-btn" onclick="closePrivacyPolicy()">❌</button>
+      <h4 class="text-primary text-center">🍎 Food & Fruits Privacy Policy</h4>
+      <h8 class="text-primary">Your privacy is important to us. This policy explains how we handle your food-related
+        data.
+        <ul style="font-size: 14px;">
+          <li>
+            <strong>Personal Info:</strong> We do not collect personal information like your name, phone number, or
+            address unless you choose to provide it (e.g., while subscribing to updates or placing an order). Any such
+            data is stored securely and only used to enhance your experience.
+          </li>
+          <li>
+            <strong>Nutrition Data:</strong> All fruit and food nutritional information (like calories, vitamins, sugar
+            content, etc.) is displayed solely for educational and informational purposes. We do not track your dietary
+            choices unless you opt in (such as saving favorite fruits).
+          </li>
+          <li>
+            <strong>Cookies:</strong> Our site uses cookies to remember your preferences—like selected language,
+            favorite fruits, or last-visited pages. These small files help personalize your experience but do not store
+            any sensitive information.
+          </li>
+          <li>
+            <strong>No Third-Party Sharing:</strong> Your data is **never** sold, traded, or rented to advertisers or
+            external parties. We value your trust and follow a strict no-sharing policy, ensuring your browsing behavior
+            and selections remain private.
+          </li>
+          <li>
+            <strong>Secure Storage:</strong> Any information you voluntarily share is encrypted using industry-standard
+            methods and stored on secure servers. Access is limited to authorized personnel only and reviewed
+            periodically for safety compliance.
+          </li>
+          <li>
+            <strong>User Control:</strong> You have full control over your data. You can request access, correction, or
+            deletion of your information anytime by contacting us via our support team.
+          </li>
+          <li>
+            <strong>Children’s Privacy:</strong> Our services are not directed at children under 13. We do not knowingly
+            collect data from minors without parental consent.
+          </li>
+          <li>
+            <strong>Policy Updates:</strong> We may update this policy occasionally to reflect changes in data practices
+            or legal requirements. Significant changes will be clearly notified on the site.
+          </li>
+        </ul>
+      </h8>
+    </div>
+  </div>
+
+  <!-- Account Settings Modal -->
+  <div class="modal fade" id="accountModal" tabindex="-1" aria-labelledby="accountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="accountModalLabel">⚙️ Account Settings</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-dark">
+          <p>Manage your account preferences here.</p>
+          <ul class="list-group">
+            <li class="list-group-item">Change Password</li>
+            <li class="list-group-item">Update Email Address</li>
+            <li class="list-group-item">Payment Methods</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help & Support Modal -->
+  <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="helpModalLabel">❓ Help & Support</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-dark">
+          <p>If you need assistance with an order, please contact us at:</p>
+          <p><strong>Email:</strong> support@fruitshop.com</p>
+          <p><strong>Phone:</strong> +91 9660800684</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Safety Settings Modal -->
+  <div class="modal fade" id="safetyModal" tabindex="-1" aria-labelledby="safetyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="safetyModalLabel">🛡️ Safety Settings</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-dark">
+          <p>Manage your data sharing and security preferences to keep your account safe.</p>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="twoFactorAuth">
+            <label class="form-check-label" for="twoFactorAuth">Enable Two-Factor Authentication</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm sticky-top container mt-3"
+    style="border-radius: 20px;">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="#" onclick="openSidebar()">CartApp</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Collapsible Content -->
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+          <li class="nav-item mx-2">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link active" data-bs-toggle="modal" data-bs-target="#fruitModal">
+              Description
+            </a>
+          </li>
+
+          <li class="nav-item dropdown mx-2">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Filter
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="priceSortDropdown">
+              <li><a class="dropdown-item" th:href="@{/cart(sort='lowToHigh')}">Low to High Price</a></li>
+              <li><a class="dropdown-item" th:href="@{/cart(sort='highToLow')}">High to Low Price</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item mx-2" th:if="${session.loggedInUser == null}">
+            <a class="nav-link" href="/login">
+              Sign In <i class="bi bi-box-arrow-in-right"></i>
+            </a>
+          </li>
+          <li class="nav-item mx-2" th:if="${session.loggedInUser == null}">
+            <a class="nav-link" href="/signup">
+              Sign Up <i class="bi bi-person-plus"></i>
+            </a>
+          </li>
+          <li class="nav-item mx-2" th:if="${session.loggedInUser != null}">
+            <a class="nav-link" href="/logout">
+              Logout <i class="bi bi-box-arrow-right"></i>
+            </a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link position-relative" href="/cart/items">
+              CartItem <i class="bi bi-cart-check"></i>
+              <span class="position-absolute top-3 start-100 translate-middle badge rounded-pill bg-success">
+                <span th:text="${cartCount}">0</span>
+              </span>
+            </a>
+          </li>
+
+          <li class="nav-item mx-2">
+            <a class="nav-link" th:href="@{/reviews}">Review <i class="bi bi-chat-square-text"></i></a>
+          </li>
+        </ul>
+        <!-- Right Side -->
+        <form class="d-flex align-items-center" th:action="@{/data}" method="get">
+          <input class="form-control" type="search" name="search" id="searchBox" placeholder="Search by title..."
+            style="border-radius: 10px; width: 100%; max-width: 180px; height: 35px; margin-left: 10px;" onkeyup="searchByTitle()" />
+          <button class="btn btn-outline-success" type="submit"
+            style="border-radius: 10px; margin-left: 10px;">Search</button>
+        </form>
+        <div class="d-flex align-items-center">
+          <a th:if="${isDeveloper}" href="/admin/booked-users" class="btn btn-warning btn-sm ms-3">Orders</a>
+          <a th:if="${isDeveloper}" href="/new" class="btn btn-success btn-sm ms-3">+ New Item</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="modal fade" id="fruitModal" tabindex="-1" aria-labelledby="fruitModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="fruitModalLabel">🍓 Our Fresh Fruits</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body"
+          style="min-height: 150px; font-family: Arial, sans-serif; color: black; font-size: 16px;">
+          <p>Welcome to our Fresh Fruits section! Here’s a list of some of our seasonal and everyday favorites:</p>
+
+          <ul>
+            <li>🍎 <strong>Apple</strong>: Crisp and juicy, perfect for snacking or baking.</li>
+            <li>🍌 <strong>Banana</strong>: High in energy and potassium — great post-workout fruit.</li>
+            <li>🥭 <strong>Mango</strong>: Sweet, tropical delight, known as the “King of Fruits.”</li>
+            <li>🍇 <strong>Grapes</strong>: Bite-sized sweetness, red and green varieties available.</li>
+            <li>🍊 <strong>Orange</strong>: Loaded with Vitamin C, perfect for juice or eating raw.</li>
+            <li>🍍 <strong>Pineapple</strong>: Tangy and sweet, excellent in desserts and drinks.</li>
+            <li>🍉 <strong>Watermelon</strong>: Extremely refreshing, perfect for summer hydration.</li>
+            <li>🍒 <strong>Cherries</strong>: Juicy, sweet, and packed with antioxidants.</li>
+            <li>🥝 <strong>Kiwi</strong>: Tart and unique, filled with vitamin C and fiber.</li>
+            <li>🍐 <strong>Pear</strong>: Soft, sweet, and ideal for salads and snacks.</li>
+            <li>🍑 <strong>Peach</strong>: Fuzzy outside, juicy inside — a summer staple.</li>
+            <li>🫐 <strong>Blueberries</strong>: Superfood loaded with antioxidants and flavor.</li>
+          </ul>
+
+          <p><strong>Did you know?</strong> Fruits are not just tasty — they boost immunity, help with digestion, and
+            improve skin health!</p>
+
+          <p><em>Tip:</em> Always wash fruits properly and consume them fresh to get the best nutrients. 🍽️</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--header part-->
+  <header class="p-4 d-flex justify-content-between align-items-center">
+    <div>
+    </div>
+  </header>
+  <div class="container text-center">
+    <div id="carousel" class="carousel-slide">
+      <div class="row" id="carouselContent">
+        <!-- Content loaded by JavaScript -->
+      </div>
+      <!-- <div class="d-flex justify-content-between mt-4">
+        <button onclick="prevSlide()" class="nav-btn">←</button>
+        <div id="dots"></div>
+        <button onclick="nextSlide()" class="nav-btn">→</button>
+      </div> -->
+    </div>
+  </div>
+  <div class="d-flex justify-content-center mt-4" id="dots"></div>
+  </div>
+
+  <!-- Floating Cart Icon with Badge -->
+  <div style="position: fixed; bottom: 120px; right: 20px; z-index: 1000;">
+    <i class="bi bi-cart-check fs-1 text-dark floating-icon" onclick="toggleCartPopup()"
+      style="font-size: 100px; cursor: pointer;"></i>
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success"
+      style="font-size: 16px; transform: translate(-50%, -40%);">
+      <span th:text="${cartCount}">0</span>
+    </span>
+  </div>
+
+  <!-- Floating Popup Menu -->
+  <!-- Floating Popup Menu -->
+  <div id="cartPopup" style="
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 70px;
+    z-index: 1001;
+    background-color: rgb(179, 172, 178);
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    padding: 20px;
+    width: 180px;
+    text-align: center;">
+    <button class="btn btn-outline-primary w-100 mb-2" onclick="location.href='/cart/items'">Cart-Item</button>
+    <button class="btn btn-outline-success w-100" onclick="location.href='/Cart-Regis'">CartWithDetail</button>
+  </div>
+
+
+  <!-- Cart Items -->
+  <div class="container mt-5">
+    <div class="row g-3 g-sm-4" th:if="${cartItems != null}">
+      <div class="col-6 col-sm-6 col-md-4 col-lg-3" th:each="item : ${cartItems}">
+        <div class="card h-100 shadow-sm"
+          style="background: linear-gradient(135deg, #93959f 0%, #9d69ce 100%); border-radius: 15px;">
+          <img th:src="${item.image}" class="card-img-top" alt="Item Image"
+            style="height: 120px; border-top-left-radius: 15px; border-top-right-radius: 15px; object-fit: cover;">
+          <div class="card-body">
+            <h5 class="card-title" th:text="${item.name}">Item Name</h5>
+            <h6 class="card-subtitle mb-2 text-muted">
+              Price: ₹<span th:text="${item.price}"></span>
+            </h6>
+            <p class="card-text" th:text="${item.content}">Item description goes here...</p>
+            <p class="card-text">
+              <small class="text-muted">Author: <span th:text="${item.author}">Author Name</span></small>
+            </p>
+          </div>
+
+          <div class="card-footer text-center">
+            <div th:if="${isDeveloper}">
+              <a th:href="@{/cart/edit/{id}(id=${item.id})}" class="btn btn-sm btn-primary">Edit</a>
+              <a th:href="@{/cart/delete/{id}(id=${item.id})}"
+                onclick="return confirm('Are you sure you want to delete this cart?');"
+                class="btn btn-sm btn-danger">Delete</a>
+            </div>
+            <a th:href="@{/cart/fruit/{id}(id=${item.id})}" class="btn btn-sm btn-outline-dark">Add cart <i
+                class="bi bi-cart-check"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <hr>
+    <Section id="slides_parent">
+      <div class="container">
+        <div class="slides">
+          <div class="slide_1">
+            <div class="slide_info">
+              <p>Apple </p>
+            </div>
+          </div>
+          <div class="slide_1 slide_2">
+            <div class="slide_info">
+              <p>Banana</p>
+            </div>
+          </div>
+          <div class="slide_1 slide_3">
+            <div class="slide_info">
+              <p>Strawberry</p>
+            </div>
+          </div>
+          <div class="slide_1 slide_4">
+            <div class="slide_info">
+              <p>Grapes</p>
+            </div>
+          </div>
+          <div class="slide_1 slide_5">
+            <div class="slide_info">
+              <p>Oranges</p>
+            </div>
+          </div>
+          <div class="slide_1 slide_6">
+            <div class="slide_info">
+              <p>Pineapple</p>
+            </div>
+          </div>
+          <div class="slide_1 slide_7">
+            <div class="slide_info">
+              <p>Dragon Fruit</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Section>
+    <footer class="bg-light text-dark mt-5">
+      <div class="container py-4">
+        <div class="row gy-4">
+          <div class="col-12 col-md-3">
+            <h5 class="fw-bold">🍎 FRUIT SHOP 🍊</h5>
+            <p>We are from 1976 fruit store with an aim to simplify your daily shopping experience. We deliver you the
+              same products you get in your regular supermarket and more with the best price at your door steps..</p>
+          </div>
+          <div class="col-12 col-md-3">
+            <h6 class="fw-bold">INFORMATION</h6>
+            <ul class="list-unstyled">
+              <li>
+                <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal"
+                  data-bs-target="#aboutModal">About Us</a>
+              </li>
+              <!-- About Us Modal -->
+              <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content shadow">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="aboutModalLabel">🍎 About Our Fruit Cart Shop</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p>
+                        Welcome to <strong>Fruit Cart Shop</strong>! We provide the freshest fruits straight from farms
+                        to your table.
+                        Our mission is to deliver organic, seasonal, and handpicked produce — healthy and delicious for
+                        you and your family.
+                      </p>
+                      <p>
+                        🧺 Whether you’re buying apples, bananas, or berries, our cart is built to serve you with care
+                        and convenience.
+                      </p>
+                      <p>
+                        Thank you for supporting local farmers and sustainable choices!
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <li><a href="" target="_blank" class="text-decoration-none text-dark">Return Policy</a></li>
+              <li><a href="" target="_blank" class="text-decoration-none text-dark">Terms & Condition</a></li>
+              <li><a href="" target="_blank" class="text-decoration-none text-dark">Contact Us</a></li>
+            </ul>
+          </div>
+          <div class="col-12 col-md-3">
+            <h6 class="fw-bold">MY ACCOUNT</h6>
+            <ul class="list-unstyled">
+              <li><a href="" target="_blank" class="text-decoration-none text-dark">My Account</a></li>
+              <li><a href="/cart/items" target="_blank" class="text-decoration-none text-dark">My Cart</a></li>
+              <li><a href="" target="_blank" class="text-decoration-none text-dark">Track Order</a></li>
+            </ul>
+          </div>
+          <div class="col-12 col-md-3">
+            <h6 class="fw-bold">STAY CONNECTED</h6>
+            <ul class="list-unstyled">
+              <li><a href="" target="_blank" class="text-decoration-none text-dark">Mayank</a></li>
+              <li><a href="mailto:mayank@example.com" class="text-decoration-none text-dark">mayank@example.com</a></li>
+              <li><a href="tel:+911234567890" class="text-decoration-none text-dark">+91 9660800684</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="bg-secondary text-white text-center py-3">
+        <small>© 2025 Developed by Fresh Fruit All rights reserved.</small>
+      </div>
+    </footer>
+  </div>
+
+  <!-- <hr /> 
+     <h4>All Reviews:</h4>
+    <div th:each="r : ${reviews}" class="border p-3 my-2">
+        <h5 th:text="${r.username}">Name</h5>
+        <p th:text="${r.comment}">Comment</p>
+        <p>Rating: <span th:text="${r.rating}"></span>/5</p>
+    </div> -->
+  <!-- JavaScript -->
+  <script>
+    function openSidebar() {
+      document.getElementById("sidebar").classList.add("open");
+    }
+
+    function closeSidebar() {
+      document.getElementById("sidebar").classList.remove("open");
+    }
+
+    function openProfile() {
+      alert("View Profile clicked");
+    }
+
+    function openModelCategories() {
+      alert("Model Categories clicked");
+    }
+
+    function viewPhotos() {
+      alert("View Photos clicked");
+    }
+
+    function viewFavorites() {
+      alert("Favorite Models clicked");
+    }
+
+    function openPrivacyPolicy() {
+      document.getElementById("privacyOverlay").style.display = "flex";
+    }
+
+    function closePrivacyPolicy() {
+      document.getElementById("privacyOverlay").style.display = "none";
+    }
+    function openAccountSettings() {
+      alert("Account Settings clicked");
+    }
+
+    function openHelpSupport() {
+      alert("Help & Support clicked");
+    }
+
+    function openSafetySettings() {
+      alert("Safety Settings clicked");
+    }
+  </script>
+  <script>
+    const slides = [
+      {
+        title: "Fresh Red Apples",
+        description: "Juicy, crisp,tasty and naturally sweet — perfect for a healthy snack.",
+        price: "₹149/kg",
+        image: "https://thumbs.dreamstime.com/b/red-apple-isolated-clipping-path-19130134.jpg",
+        color: "linear-gradient(to right, #ff6b6b, #f06595)",
+        rating: 4.9,
+      },
+      {
+        title: "Organic Bananas",
+        description: "Rich in potassium and ideal for energy boosts and smoothies and tasty .",
+        price: "₹59/dozen",
+        image: "https://mallofsrilanka.com/wp-content/uploads/2025/05/bananas-white-background-300x300.jpg",
+        color: "linear-gradient(to right, #facc15, #fcd34d)",
+        rating: 4.8,
+      },
+      {
+        title: "Sweet Alphonso Mangoes",
+        description: "King of fruits, bursting with tropical flavor and juicy flesh and tasty .",
+        price: "₹249/dozen",
+        image: "https://st3.depositphotos.com/3260227/14857/i/1600/depositphotos_148577061-stock-photo-ripe-mango-fruit.jpg",
+        color: "linear-gradient(to right, #f97316, #facc15)",
+        rating: 5.0,
+      },
+      {
+        title: "Farm-Fresh Blueberries",
+        description: "Rich in antioxidants, great for snacking or topping desserts and tasty.",
+        price: "₹199/250g",
+        image: "https://www.freshaisle.com/cdn/shop/products/fresh-blueberry-125-gm-exotic-fruits-555.jpg?v=1739194980",
+        color: "linear-gradient(to right, #3b82f6, #6366f1)",
+        rating: 4.7,
+      },
+      {
+        title: "Crisp Green Grapes",
+        description: "Seedless, sweet, and refreshing — perfect for summer days and tasty.",
+        price: "₹129/kg",
+        image: "https://fruitboxco.com/cdn/shop/products/asset_22_1.jpg?v=1643137805",
+        color: "linear-gradient(to right, #34d399, #10b981)",
+        rating: 4.6,
+      },
+      {
+        title: "Juicy Watermelons",
+        description: "Refreshing and hydrating — perfect for hot summer days and tasty with water  ",
+        price: "₹89/piece",
+        image: "https://cdn.shopaccino.com/rootz/products/watermelon-3kg-866084_m.jpg?v=569",
+        color: "linear-gradient(to right, #34e89e, #0f3443)",
+        rating: 4.8,
+      },
+      {
+        title: "Sweet Strawberries",
+        description: "Bright red, sweet, and bursting with flavor — great for desserts and tasty.",
+        price: "₹199/250g",
+        image: "https://www.aishcart.in/5855-large_default/mahabaleshwar-strawberry-jumbo-5kg.jpg",
+        color: "linear-gradient(to right, #ff416c, #ff4b2b)",
+        rating: 4.9,
+      },
+      {
+        title: "Tangy Oranges",
+        description: "Vitamin-C rich and juicy — excellent for immunity and taste and best.",
+        price: "₹99/kg",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsa3K1PkfEgVzc6JeayE-uGwejpsBDBbVBUw&s",
+        color: "linear-gradient(to right, #f2994a, #f2c94c)",
+        rating: 4.7,
+      },
+      {
+        title: "Fresh Pineapples",
+        description: "Tropical sweetness with a zing — ideal for juices and salads and tasty .",
+        price: "₹75/piece",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfbDqE0aR7RaCAZuHZgyXb5SIOfXf3J0Bd2w&s",
+        color: "linear-gradient(to right, #ffe259, #ffa751)",
+        rating: 4.6,
+      },
+      {
+        title: "Red Pomegranates",
+        description: "Loaded with antioxidants — adds a ruby crunch to any meal and tasty.",
+        price: "₹145/kg",
+        image: "https://aramgarhorchards.com/wp-content/uploads/2018/08/Pomegranate.jpg",
+        color: "linear-gradient(to right, #e52d27, #b31217)",
+        rating: 4.9,
+      }
+    ];
+
+    let currentIndex = 0;
+
+    function showSlide(index) {
+      currentIndex = (index + slides.length) % slides.length;
+      const slide = slides[currentIndex];
+      const carousel = document.getElementById("carousel");
+      const content = document.getElementById("carouselContent");
+
+      carousel.style.background = slide.color;
+      content.innerHTML = `
+        <div class="col-md-2">
+          <img src="${slide.image}" alt="${slide.title}" class="carousel-image">
+        </div>
+        <div class="col-md-6 text-start">
+          <h2>${slide.title}</h2>
+          <p class="lead">${slide.description}</p>
+          <h5>Price: ${slide.price}</h5>
+          <div class="rating">⭐ ${slide.rating.toFixed(1)} / 5</div>
+        </div>
+      `;
+      updateDots();
+    }
+
+    function updateDots() {
+      const dotsContainer = document.getElementById("dots");
+      dotsContainer.innerHTML = "";
+      slides.forEach((_, idx) => {
+        const dot = document.createElement("div");
+        dot.className = "dot" + (idx === currentIndex ? " active" : "");
+        dot.onclick = () => {
+          showSlide(idx);
+        };
+        dotsContainer.appendChild(dot);
+      });
+    }
+
+    function nextSlide() {
+      showSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+      showSlide(currentIndex - 1);
+    }
+
+    // Auto slide every 3 seconds
+    setInterval(nextSlide, 2000);
+
+    // Initialize
+    showSlide(currentIndex);
+  </script>
+  <script>
+    function searchByTitle() {
+      let input = document.getElementById("searchBox").value.toLowerCase().trim();
+      let cards = document.querySelectorAll(".card");
+
+      cards.forEach(card => {
+        let title = card.querySelector(".card-title").innerText.toLowerCase();
+        card.parentElement.style.display = title.includes(input) ? "block" : "none";
+      });
+    }
+  </script>
+
+  <script>
+    function toggleCartPopup() {
+      const popup = document.getElementById("cartPopup");
+      popup.style.display = (popup.style.display === "none" || popup.style.display === "") ? "block" : "none";
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
